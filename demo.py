@@ -1,5 +1,6 @@
 import datetime
 from user import User
+from availability import Availability
 
 class Demo():
     def __init__(self):
@@ -11,6 +12,17 @@ class Demo():
         if len(users) != 1:
             return None
         return users[0]
+
+    def _get_yesno(self, prompt):
+        yes = ('y', 'yes')
+        no = ('n', 'no')
+
+        while True:
+            resp = input(prompt).lower()
+            if resp in yes:
+                return 'y'
+            if resp in no:
+                return 'n'
 
     def create_user(self):
         emp_first = input("\n\n Enter employees first name: ")
@@ -39,15 +51,20 @@ class Demo():
         sun_start = int(input("\n Enter a start time for sun: "))
         sun_end = int(input("\n Enter an end time for sun: "))
 
-        user.create_availability(
-            mon_start, mon_end,
-            tue_start, tue_end,
-            wed_start, wed_end,
-            thu_start, thu_end,
-            fri_start, fri_end,
-            sat_start, sat_end,
-            sun_start, sun_end
-        )
+        if self._get_yesno("Keep new availability?") == 'n':
+            return False
+
+        new_avail = Availability()
+        new_avail.mon = (mon_start, mon_end)
+        new_avail.tue = (tue_start, tue_end)
+        new_avail.wed = (wed_start, wed_end)
+        new_avail.thu = (thu_start, thu_end)
+        new_avail.fri = (fri_start, fri_end)
+        new_avail.sat = (sat_start, sat_end)
+        new_avail.sun = (sun_start, sun_end)
+
+        user.availability = new_avail
+
         return True
 
     def show_users(self):

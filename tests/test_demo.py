@@ -47,6 +47,28 @@ def test_set_availability_not_found(monkeypatch):
         assert d.set_availability() is False
 
 
+def test_set_availability_discard(monkeypatch):
+    with monkeypatch.context() as m:
+        set_input_mock(m, [
+            'Email',
+            '1', '2',
+            '3', '4',
+            '5', '6',
+            '7', '8',
+            '9', '10',
+            '11', '12',
+            '13', '14',
+            'no'
+        ])
+
+        d = Demo()
+        d.user_list.append(create_user())
+
+        before_id = id(d.user_list[0].availability)
+        assert d.set_availability() is False
+        assert before_id == id(d.user_list[0].availability)
+
+
 def test_set_availability_good(monkeypatch):
     with monkeypatch.context() as m:
         set_input_mock(m, [
@@ -57,13 +79,16 @@ def test_set_availability_good(monkeypatch):
             '7', '8',
             '9', '10',
             '11', '12',
-            '13', '14'
+            '13', '14',
+            'yes'
         ])
 
         d = Demo()
         d.user_list.append(create_user())
 
+        old_id = id(d.user_list[0].availability)
         assert d.set_availability() is True
+        assert old_id != id(d.user_list[0].availability)
         assert d.user_list[0].availability.mon == [1, 2]
         assert d.user_list[0].availability.tue == [3, 4]
         assert d.user_list[0].availability.wed == [5, 6]
